@@ -1,5 +1,5 @@
 
-const { CartMethods }  = require('../dao/factory')
+const { CartMethods, ProductMethods }  = require('../dao/factory')
 const ProductService  = require('../services/products.service')
 const TicketService = require('../services/tickets.service')
 const UserService  = require('../services/users.service');
@@ -8,7 +8,7 @@ const productService = new ProductService();
 const ticketService = new TicketService();
 const userSevice = new UserService();
 const uuid4= require('uuid4')
- 
+  
 class CartService { 
   async getAll() {
     try {
@@ -50,26 +50,32 @@ class CartService {
       throw new Error(error.message);
     }
   }
-  async addProductToCart(productId, cartId) {
+  async addProductToCart(productId, cartId, user) {
     try {
+      let productFound = await productService.getProductById(productId)
       let carts = await this.getAll();
       let checkCId = carts.find((cId) => cId._id.equals(cartId));
       if (!checkCId) {
         throw new Error("Invalid id, cart not found");
       }
-      let cart = await CartMethods.findOne(cartId);
-      console.log(cart)
-      let existingProduct = cart.products.find((pId) => pId.idProduct.equals(productId));
+      if(productFound.owner === user){
+        throw new Error(`The user ${user} cannot load the product in the cart, because it was created by him.`);
+      }
+      else{ 
 
-      if (existingProduct) {
-        existingProduct.quantity += 1;
-      } else {
-        cart.products.push({ idProduct: productId, quantity: 1 });
+            let cart = await CartMethods.findOne(cartId);
+            console.log(cart)
+            let existingProduct = cart.products.find((pId) => pId.idProduct.equals(productId));
+      
+            if (existingProduct) { 
+              existingProduct.quantity += 1;
+            } else {
+              cart.products.push({ idProduct: productId, quantity: 1 });
+            }
+            await cart.save();
+            console.log(`Product ${productId} was added successfully to cart ${cartId}`);
       }
  
-      await cart.save();
-
-      console.log(`Product ${productId} was added successfully to cart ${cartId}`);
     } catch (error) {
       throw new Error(error.message);
     }

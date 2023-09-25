@@ -1,4 +1,4 @@
-const express = require('express') ;
+const express = require('express');
 const {
     productsView,
     cartView,
@@ -6,12 +6,12 @@ const {
     getViewsError
 } = require('../controller/views.controller');
 
-const viewsRouter = express.Router();
+const router = express.Router();
 
 
-viewsRouter.get('/products', productsView);
-viewsRouter.get('/cart/:cid', cartView);
-viewsRouter.get('*', getViewsError);
+router.get('/products', productsView);
+router.get('/cart/:cid', cartView);
+router.get('*', getViewsError);
 
 
-module.exports = viewsRouter; 
+module.exports = router; 

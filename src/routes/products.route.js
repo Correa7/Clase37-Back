@@ -1,14 +1,6 @@
 const express = require("express");
-const { isUser, isAdmin } = require("../middlewares/auth.middleware");
-// const {getProducts,
-//   getProductsById,
-//   postProduct,
-//   postManyProducts,
-//   delProductById,
-//   putProductById,
-//   getProductError} = require ('../controller/products.controller')
-
-  const {
+const { isAdminPrimium} = require("../middlewares/auth.middleware");
+const {
     getWithQuerys,
     getProductById,
     addProduct,
@@ -16,19 +8,17 @@ const { isUser, isAdmin } = require("../middlewares/auth.middleware");
     deleteProduct,
     updateProduct,
     getProductError
-   } = require ('../controller/products.controller')
-
-const { Router } = express;
-const router = new Router();
-router.use(express.json());
+   } = require ('../controller/products.controller');
+const router = new express.Router();
+router.use(express.json()); 
 router.use(express.urlencoded({ extended: true }));
 
 router.get("/", getWithQuerys);
-router.get("/:id", isAdmin, getProductById);  
-router.post("/", isAdmin, addProduct);
-router.post("/many", isAdmin, addManyProducts);
-router.delete("/:id", isAdmin, deleteProduct);
-router.put("/:id", isAdmin,updateProduct);
+router.get("/:id", isAdminPrimium, getProductById);  
+router.post("/",isAdminPrimium, addProduct);
+router.post("/many", isAdminPrimium, addManyProducts);
+router.delete("/:id", isAdminPrimium, deleteProduct); 
+router.put("/:id", isAdminPrimium,updateProduct);
 router.get("*", getProductError);
 
 module.exports = router;

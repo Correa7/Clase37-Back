@@ -24,7 +24,7 @@ app.use(session({
     }),
     secret:secret,
     resave:false,
-    saveUninitialized:false
+    saveUninitialized:false 
 
 }));
 // Passport Passport-Local
@@ -38,7 +38,7 @@ app.use(passport.session());
 const addLogger = require('./utils/logger');
 app.use(addLogger);
 
-// Routes
+//                  Routes
 // Views
 // const routesViews = require('./routes/views.route');
 // app.use('/', routesViews)
@@ -48,13 +48,13 @@ app.use('/api/product', routesProduct);
 const viewsProducts= require('./routes/products.route.views');
 app.use('/products',viewsProducts);
 //Cart
-const routesCart = require('./routes/cart.route'); 
+const routesCart = require('./routes/cart.route');  
 app.use('/api/cart', routesCart);
 const viewsCart = require('./routes/cart.route.view');
 app.use('/cart', viewsCart);  
 // Users
-// const routesUsers = require('./routes/user.route');
-// app.use('/api/user',routesUsers);
+const routesUsers = require('./routes/user.route');
+app.use('/api/user',routesUsers);
 // Sessions
 const sessions = require('./routes/sessions.route');
 app.use('/session', sessions);
@@ -117,7 +117,7 @@ io.on('connection', (socket)=>{
         })
         .catch(err=>{
             res.status(500).send(
-                console.log('Error loading product')
+                console.log('Error loading product')    
             )
         })   
 

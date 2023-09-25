@@ -1,13 +1,13 @@
-const {Router} = require('express')
-const router = new Router()
-const {isAdmin} = require('../middlewares/auth.middleware')
-const {mockProducts,mockUsers,mockGetError} = require('../controller/mocks.controller')
+const express = require('express');
+const {isAdmin,isAdminPrimium} = require('../middlewares/auth.middleware');
+const {mockProducts,mockUsers,mockGetError} = require('../controller/mocks.controller');
+const router = new express.Router();
 
+router.use(express.json()); 
+router.use(express.urlencoded({ extended: true }));
 
-// router.get('/products',isAdmin, mockProducts)
-// router.get('/users',isAdmin, mockUsers)
-router.get('/products', mockProducts)
-router.get('/users',mockUsers) 
-router.get('*', mockGetError)
+router.get('/products',isAdminPrimium, mockProducts);
+router.get('/users',isAdmin, mockUsers); 
+router.get('*', mockGetError);
 
-module.exports = router
+module.exports = router;

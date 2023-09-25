@@ -1,12 +1,13 @@
-const express= require('express')
-const CartView = express.Router()
-const { isUser, isAdmin } = require("../middlewares/auth.middleware");
-const {cartView,getViewsError} = require('../controller/views.controller');
+const express= require('express');
+const { goToLogin, isUserPrimium } = require("../middlewares/auth.middleware");
+const { cartView, getViewsError } = require('../controller/views.controller');
+
+const router = new express.Router(); 
   
-CartView.use(express.json())
-CartView.use(express.urlencoded({extended:true}))
+router.use(express.json());
+router.use(express.urlencoded({extended:true}));
 
-CartView.get('/', cartView)
-CartView.get('*', getViewsError)
+router.get('/', goToLogin, isUserPrimium, cartView);
+router.get('*', getViewsError);
 
-module.exports= CartView
+module.exports= router;

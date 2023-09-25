@@ -6,7 +6,7 @@ const CustomError = require('../services/errors/CustomError.js');
 const EErrors = require('../services/errors/errors-enum.js');
 const { generateProductErrorInfo } = require('../services/errors/messages/creation-error.messages.js');
 
-
+ 
  
 
 const getWithQuerys = async (req,res) =>{
@@ -42,13 +42,16 @@ const getProductById = async (req, res) =>{
   }
 const addProduct = async (req, res) =>{
       try {
-          const product = req.body 
+          const product = req.body
+          product.owner = req.session.user.email
+          let user = req.session.user.email
+          console.log(user)
           const { title, description, price, thumbnail,code,stock,category, status } = req.body;
-        if (!title || !description || !price || !thumbnail || !code || !stock || !category || !status) {
-            // creamos custom Error
+        if (!title || !description || !price || !code || !stock || !category) {
+            // creamos custom Error 
             CustomError.createError({
                 name: "Product creation error",
-                cause: generateProductErrorInfo({ title, description, price, thumbnail,code,stock,category, status }),
+                cause: generateProductErrorInfo({ title, description, price,code,stock,category }),
                 message: "Error to create Product - TEST",
                 code: EErrors.INVALID_TYPES_ERROR
             })
@@ -63,10 +66,25 @@ const addProduct = async (req, res) =>{
   }
 const deleteProduct = async (req, res) =>{
       try {
-          const id = req.params.id;
-          const product = await productService.deleteProduct(id);
-          res.status(200).json({status:"success", message: `The product with id: ${id} was deleted succesfully!`, payload: product
-          })
+          let id = req.params.id;
+          let rol = req.session.user.rol
+          let email = req.session.user.email
+          if(rol === 'Premium'){
+            let productFound = await productService.getProductById(id)
+            if(productFound.owner === email){
+              const product = await productService.deleteProduct(id);
+              res.status(200).json({status:"success", message: `The product with id: ${id} was deleted succesfully!`, payload: product
+            })
+              }
+              else{
+                res.status(400).send({stasus:'error', message:`The product with id: ${id} could not be removed!`})
+              }
+          }
+          else{
+            const product = await productService.deleteProduct(id);
+            res.status(200).json({status:"success", message: `The product with id: ${id} was deleted succesfully!`, payload: product
+            })
+          }
       } catch (error) {
           res.status(400).json({
               status: "error",
@@ -80,7 +98,7 @@ const updateProduct = async (req, res) =>{
           const productByUser = req.body
           const product = await productService.updateProduct(id, productByUser);
           res.status(200).json({status: "success", message: `The product with id: ${id} was updated succesfully!`, payload: product
-          })
+          }) 
       } catch (error) {
           res.status(400).json({
               status: "error",
@@ -122,157 +140,3 @@ module.exports ={
   updateProduct,
   getProductError
  }
-
-
-
-
-
-// const getProducts = async (req, res) => {
-//   const { page, limit } = req.query;
-//   try {
-//     const dataproduct = await Service.getAll(page, limit);
-    
-//     return res.status(200).json({
-//       status: "success",
-//       payload: dataproduct.docs,
-//       totalPages: dataproduct.totalPages,
-//       prevPages: dataproduct.prevPage,
-//       nextPages: dataproduct.nextPage,
-//       page: dataproduct.page,
-//       hasPrevPage: dataproduct.hasPrevPage,
-//       hasNextPage: dataproduct.hasNextPage,
-//       prevLink: dataproduct.hasPrevPage
-//         ? `http://localhost:8080/dataproduct/?page=${dataproduct.prevPage} `
-//         : null,
-//       nextLink: dataproduct.hasNextPage
-//         ? `http://localhost:8080/dataproduct/?page=${dataproduct.nextPage} `
-//         : null,
-      
-//     });
-//   } catch (e) {
-//     console.log(e);
-//     return res.status(500).json({
-//       status: "error",
-//       msg: "something went wrong :(",
-//       data: {},
-//     });
-//   }
-// }
-// const getProductsById = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const product = await Service.getById(id);
-//     return product
-//       ? res.status(200).json({
-//           status: "success",
-//           msg: "Product Get by ID",
-//           data: product,
-//         })
-//       : res.status(200).json({
-//           status: "error",
-//           msg: "Product not found",
-//           data: product,
-//         });
-//   } catch (e) {
-//     console.log(e);
-//     return res.status(500).json({
-//       status: "error",
-//       msg: "something went wrong :(",
-//       data: {},
-//     });
-//   }
-// }
-// const postProduct = async (req, res) => {
-//   try {
-//     const data = req.body;
-//     const productCreated = await Service.createOne(data);
-//     return res.status(201).json({
-//       status: "success",
-//       msg: "product created",
-//       data: productCreated,
-//     });
-//   } catch (e) {
-//     console.log(e);
-//     return res.status(500).json({
-//       status: "error",
-//       msg: "something went wrong :(",
-//       data: {},
-//     });
-//   }
-// }
-// const postManyProducts = async (req, res) => {
-//   try {
-//     const data = req.body;
-//     const productCreated = await Service.createMany(data);
-//     return res.status(201).json({
-//       status: "success",
-//       msg: "product created",
-//       data: productCreated,
-//     });
-//   } catch (e) {
-//     console.log(e);
-//     return res.status(500).json({
-//       status: "error",
-//       msg: "something went wrong :(",
-//       data: {},
-//     });
-//   }
-// }
-// const delProductById = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     await Service.deletedOne(id);
-//     return res.status(200).json({
-//       status: "success",
-//       msg: "Product deleted",
-//       data: {},
-//     });
-//   } catch (e) {
-//     console.log(e);
-//     return res.status(500).json({
-//       status: "error",
-//       msg: "something went wrong :(",
-//       data: {},
-//     });
-//   }
-// }
-// const putProductById = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { title, description, thumbnail, code, stock, category, status } = req.body;
-//     const data = req.body;
-//     await Service.updateOne(
-//       id,
-//       title,
-//       description,
-//       thumbnail,
-//       code,
-//       stock,
-//       category,
-//       status
-//     );
-//     return res.status(201).json({
-//       status: "success",
-//       msg: "Product update",
-//       data: data,
-//     });
-//   } catch (e) {
-//     console.log(e);
-//     return res.status(500).json({
-//       status: "error",
-//       msg: "something went wrong :(",
-//       data: {},
-//     });
-//   }
-// }
-
-
-// module.exports = {
-//   getProducts,
-//   getProductsById,
-//   postProduct,
-//   postManyProducts,
-//   delProductById,
-//   putProductById,
-//   getProductError
-// }

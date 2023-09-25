@@ -1,11 +1,14 @@
 // Creamos Las Rutas
 const express = require("express");
-const { isUser, isAdmin } = require("../middlewares/auth.middleware");
-const {getChat, getChatError} = require ('../controller/chat.controller')
-const { Router } = express; 
-const router = new Router();
+const { goToLogin, isUserPrimium } = require("../middlewares/auth.middleware");
+const {getChat, getChatError} = require ('../controller/chat.controller');
 
-router.get("/", isUser, getChat);
+const router = new express.Router(); 
+
+router.use(express.json());
+router.use(express.urlencoded({extended:true}));
+
+router.get("/", goToLogin, isUserPrimium, getChat);
 router.get("*", getChatError);
 
 module.exports = router;

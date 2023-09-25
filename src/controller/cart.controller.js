@@ -55,9 +55,10 @@ const getCartById = async (req, res) =>{
 }
 const addPorductToCart = async (req, res) => { 
     try {
+        let user = req.session.user.email
         const pid = req.params.pid;
         const cid = req.params.cid;
-        await cartService.addProductToCart(pid, cid) 
+        await cartService.addProductToCart(pid, cid, user) 
         const cart = await cartService.getCartById(cid);
         res.status(201).json({
             status: "success",

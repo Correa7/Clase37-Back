@@ -20,9 +20,9 @@ const ProductSchema = new mongoose.Schema({
     },
     thumbnail:{
         type:String,
-        // default:"https://via.placeholder.com/180x180",
+        default:"https://via.placeholder.com/180x180", 
         unique:false,
-        required:true,
+        
     },
     code:{
         type:String,
@@ -42,7 +42,11 @@ const ProductSchema = new mongoose.Schema({
     status:{
         type:Boolean,
         default:true
-    }, 
+    },
+    owner: {
+        type:String,
+        default:'admin@admin.com.ar'
+    } 
 },{ versionKey: false });
 ProductSchema.plugin(mongoosePaginate);
 

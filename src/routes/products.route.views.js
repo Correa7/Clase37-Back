@@ -1,10 +1,10 @@
 const express = require("express");
-const productViews = express.Router();
 const {productsView,getViewsError} = require('../controller/views.controller');
+const router = express.Router();
 
-productViews.get("/", productsView);
-productViews.get("*", getViewsError); 
+router.get("/", productsView);
+router.get("*", getViewsError); 
 
-module.exports = productViews;
+module.exports = router;
 
   

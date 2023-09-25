@@ -1,10 +1,12 @@
 const express = require("express");
-const { Router } = express;
-const router = new Router();
-const { isUser, isAdmin } = require("../middlewares/auth.middleware");
+const router = new express.Router();
+const { goToLogin,isAdminPrimium} = require("../middlewares/auth.middleware");
 const { getRealTimeProducts, getRealTimeError} = require ('../controller/realTimeProducts.controller')
 
-router.get("/", isAdmin, getRealTimeProducts); 
-router.get("*", getRealTimeError);
+router.use(express.json());
+router.use(express.urlencoded({extended:true}));
+
+router.get("/", goToLogin, isAdminPrimium, getRealTimeProducts); 
+router.get("*", getRealTimeError); 
 
 module.exports = router; 

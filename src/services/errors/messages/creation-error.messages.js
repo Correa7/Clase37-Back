@@ -21,6 +21,7 @@ const generateProductErrorInfo = (product) => {
         * stock: type Number, recibido: ${product.stock}
         * category: type String, recibido: ${product.category}
         * status: type Boolean, recibido: ${product.status}
+        * Owner: type String, recibido: ${product.owner}
 
 `; 
 };

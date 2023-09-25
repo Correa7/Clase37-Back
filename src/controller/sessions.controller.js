@@ -1,5 +1,3 @@
-const UserServices = require("../dao/mongo/services/users.services");
-const Service = new UserServices();
 
 const sessionGetRegister = (req, res) => {
   res.status(200).render("register", {
@@ -45,8 +43,6 @@ const sessionPostLogin = (req, res) => {
 const sessionGetProfile = (req, res) => {
     let session = req.session.user
     let rol = req.session.user.rol
-    console.log('Esto es rol: ' + rol) 
-    console.log(req.session.user)  
     const data={
         title:'Profile',
         style:'profile.css',

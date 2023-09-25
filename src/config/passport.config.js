@@ -17,7 +17,6 @@ const initializePassport = () => {
         async (req, username, password, done)=>{
             try{
                 let userFound = await UserModel.findOne({email:username})
-                console.log(userFound)
                 if (!userFound) {
                     console.log('User Not Found with username (email) ' + username);
                     return done(null, false);

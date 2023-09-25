@@ -1,24 +1,28 @@
-const express = require('express')
-const passport = require('passport')
-const { isUser, isAdmin } = require("../middlewares/auth.middleware");
+const express = require('express');
+const passport = require('passport');
+const { goToLogin,isAdmin } = require("../middlewares/auth.middleware");
 const{ getUser,
+  resetForm,
+  resetPass,
   getUserById,
+  rolUserById,
   postUser,
   delUserById,
-  putUserById} = require ('../controller/users.controller')
+  putUserById} = require ('../controller/users.controller');
 
+const router = new express.Router();
+router.use(express.json());
+router.use(express.urlencoded({extended:true}));
 
-const {Router} = express
-const router = new Router()
-router.use(express.json())
-router.use(express.urlencoded({extended:true}))
-
-router.get('/', getUser)
-router.get('/:id', getUserById)
+router.get('/reset-form', resetForm)
+router.post('/reset-password', resetPass)  
+router.get('/',goToLogin, isAdmin, getUser);
+router.get('/:id',goToLogin, isAdmin, getUserById);
 router.post('/', passport.authenticate('register-passport',{failureRedirect:'/session/failed-register'}),postUser);
-router.delete('/:id',delUserById);
-router.put('/:id', putUserById);
+router.post('/premium/:uid',goToLogin, rolUserById );
+router.delete('/:id',goToLogin, isAdmin, delUserById);
+router.put('/:id',goToLogin, isAdmin, putUserById); 
 
-module.exports = router
+module.exports = router;
 
 

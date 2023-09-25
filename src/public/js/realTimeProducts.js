@@ -37,9 +37,10 @@ function addProduct(){
             code:document.getElementById('code').value,
             stock:document.getElementById('stock').value,
             category:document.getElementById('category').value,
-            status:true,    
+            status:true,
+               
     }
-    socket.emit('addProduct', newProduct)  
+    socket.emit('addProduct', newProduct)   
 return false
 }
 function delProduct(){

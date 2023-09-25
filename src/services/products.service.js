@@ -38,7 +38,7 @@ class ProductService {
     }
     async productValidation(title, description, price, thumbnail, code, stock, category) {
         try {
-            if (!code || !title || !description || !price || !thumbnail || !stock || !category) {
+            if (!code || !title || !description || !price || !stock || !category) {
                 throw new Error('Empty fields, please add all the statements');
             }
         } catch (error) {
@@ -70,6 +70,7 @@ class ProductService {
                 stock: product.stock,
                 status: true,
                 category: product.category,
+                owner: product.owner
                 
             });
             console.log(`Product ${product.title} added succesfully`);
@@ -148,4 +149,4 @@ class ProductService {
 
 }
 
-module.exports = ProductService
+module.exports = ProductService 
