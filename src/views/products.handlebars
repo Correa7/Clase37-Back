@@ -26,7 +26,7 @@
 
 
     <div class="contenedor-cards" id="z-cards">  
-        {{#each products}}
+        {{#each products}} 
                 {{!-- <div class="card" style="width: 15rem;"> --}}
                 <div class="card" >
                 <img src="{{this.thumbnail}}" class="card-img-top" alt="...">
@@ -37,7 +37,8 @@
                     
                 </div>
                 <div class="card-body">
-                <button id="{{this._id}}" class="btn btn-primary" onclick="addProductToCart('{{this._id}}')">Add to Cart</button>
+                  
+                <button id="{{this._id}}" class="btn btn-primary" onclick="addProductToCart('{{this._id}}')">Add to Cart</button> 
                 </div>
             </div>
       {{/each}}

@@ -1,5 +1,8 @@
 const nodemailer = require('nodemailer')
-const {gmailAccount, gmailAppPass} = require('../config/env.config')
+const {secret,gmailAccount, gmailAppPass} = require('../config/env.config')
+const jwt = require('jsonwebtoken');
+const userModel = require('../dao/mongo/models/users.model')
+const{createHash,isValidPass } = require ('../utils/bcrypt')
 
 
 const transporter = nodemailer.createTransport({
@@ -44,7 +47,7 @@ const mailOptionsWithAttachments =  {
             path:'src/public/images/R.jpg',
             cid: 'R'
         }
-    ]
+    ] 
 
 }
  const sendEmail = (req,res)=>{
@@ -79,19 +82,33 @@ const sendMailWhitAttachments = (req,res)=>{
         res.status(500).send({ error: error, message: "Could not send email from: " + gmailAccount });
     }
 }
-const recoveryForm = (req,res)=>{
+const forgotPass = (req,res)=>{
     res.render('resetSendMail',{
         style: "recovery.css",
         title: "Recovery Pass Form"  
-    })
+    }) 
 
 } 
-const sendResetPass = (req,res)=>{
+const sendResetPass = async (req,res)=>{
     try{ 
-        let clientEmail = req.body.email
+        let userEmail = req.body.email
+        console.log(userEmail)
+        const user = await userModel.findOne({email:userEmail})
+        console.log(user)
+        if(!user){
+            return res.status(401).render('resetSendMail',{
+                style: "recovery.css",
+                title: "Recovery Pass Form",
+                message:'Non-existent email, please enter a valid email'  
+            })
+        }
+        
+        const token = jwt.sign({id:user.id}, secret, {expiresIn:'1h'})
+        console.log(token)
+
         const emailRecoveryOptions ={
             from: 'Coder Test c_44705 - ' + gmailAccount,
-            to: clientEmail,
+            to: userEmail,
             subject: "Correo de recuperacion de contraseña - Clase 37",
             html: `
                     <div>
@@ -99,7 +116,17 @@ const sendResetPass = (req,res)=>{
                         <h3>We have sent you this email in response to your request to reset your password on company name.</h3><br>
                         <h3>To reset your password, please follow the link below:</h3>
                         <br>
-                        <a class="btn btn-outline-primary mt-2 ms-2 me-2" href="http://localhost:8080/api/user/reset-form">Click here to Reset your Password</a>
+                        <p>User Id:</p>
+                        <p> ${user._id} </p>
+                        <br>
+                        <p>Token de Seguridad:</p>
+                        <p> ${token} </p>
+                        <br>
+                        <br>
+                        <a class="btn btn-outline-primary mt-2 ms-2 me-2" href="http://localhost:8080/api/email/reset-form">Click here to Reset your Password</a>
+                        <br>
+                        <br>
+                        <br>
                     </div>
                     
             `
@@ -109,14 +136,13 @@ const sendResetPass = (req,res)=>{
                 console.log(error);
                 res.status(400).send({ message: "Error", payload: error })
             }
-     
-            // res.send({ message: "Success!!", payload: info })             {maxAge:60 * 60 * 1000}  === 1hs
-            res.cookie('CookieResetPass', 'cookiederecuperaciondepassword', {maxAge:3 * 60 * 1000}).render("resetInfo", {
+            res.status(200).render("resetInfo", {
                 style: "resetInfo.css",
                 title: "Info",
-                message: `Hi!  ${clientEmail}  : check your Email to reset your password.`,
+                message: `Hi!  ${userEmail}  : check your Email to reset your password.`,
                 message2:`Remember the Email link will expire in 1 hour!!!`
               });
+            
         })
     } 
     catch(error){
@@ -125,10 +151,66 @@ const sendResetPass = (req,res)=>{
     }
 }
 
+const resetForm = async (req,res)=>{
+    try{
+        res.status(200).render("resetPass", {
+            style: "resetPass.css",
+            title: "Info",
+          });
+
+    }
+    catch(error){
+        console.log(error)
+        res.status(500).send({ error: error, message: "Could not send email from: " + gmailAccount });
+    }
+    
+}
+const resetPass = async (req,res)=>{
+    try{
+        let {email,password, token} = req.body
+        const user = await userModel.findOne({email:email})
+        if(isValidPass(password, user.password[0])){
+           return res.status(401).render("resetPass", {
+                style: "resetPass.css",
+                title: "Info",
+                message:'Ingresa un password diferente al que tenias'
+              });
+        }
+        jwt.verify(token, secret, async(error, user)=>{
+            if(error){
+                return res.status(500).send({ error: error, message: "Could not reset user password" });
+            }
+            else{
+                const user = await userModel.findOne({email:email})
+                let data = { 
+                    firstName: user.fileName, 
+                    lastName: user.lastName,
+                    email: user.email, 
+                    age:user.age,
+                    password:createHash(password),
+                    rol:user.rol }
+                   
+                await userModel.updateOne( { _id: user._id },data)
+                return res.status(200).render("login", {
+                    style: "login.css",
+                    title: "Login",
+                    message:'Use your new Password to log in!'
+                  });
+            }
+        })
+    }
+    catch(error){
+        console.log(error)
+        res.status(500).send({ error: error, message: "Could not reset user password" });
+    }
+} 
+
 
 module.exports = {
     sendEmail,
     sendMailWhitAttachments,
-    recoveryForm,
-    sendResetPass 
+    forgotPass,
+    sendResetPass,
+    resetForm,
+    resetPass 
 }

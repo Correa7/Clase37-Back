@@ -1,8 +1,8 @@
 
 const existingCart = document.querySelector(".userCart");
 
-const API_URL = "http://localhost:8080/api/cart"  
- 
+const API_URL = "http://localhost:8080/api/cart"   
+  
 async function addProductToCart(id){
     const url = API_URL + `/${existingCart?.id}/product/${id}`
     console.log(url)

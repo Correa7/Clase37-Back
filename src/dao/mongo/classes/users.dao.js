@@ -5,7 +5,7 @@ class UserClass{
     async find(){
         const users = await UserModel.find({})
         return users
-    }
+    } 
     async findOne(_id) {
         const user = await UserModel.findOne({ _id: _id });
         return user;

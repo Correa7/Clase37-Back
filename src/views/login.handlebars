@@ -1,4 +1,7 @@
-<section class="vh-100">
+<section class="vh-100"><br>
+  <div>
+    <h4> {{message}}</h4>
+  </div><br>
   <div class="container-fluid h-custom">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-md-9 col-lg-6 col-xl-5">
@@ -7,7 +10,7 @@
       </div>
       <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
         {{!-- Form --}}
-        <form method="post" action="/session/login">
+        <form method="post" action="/session/login" >
           <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
             <p class="lead fw-normal mb-0 me-3">Sign in with</p>
              <button type="button" class="btn btn-link btn-floating mx-1">
@@ -49,7 +52,7 @@
                 Remember me
               </label>
             </div>
-            <a href="/api/email/recovery" class="text-body">Forgot password?</a>
+            <a href="/api/email/forgot-password" class="text-body">Forgot password?</a>
           </div>
 
           <div class="text-center text-lg-start mt-4 pt-2">

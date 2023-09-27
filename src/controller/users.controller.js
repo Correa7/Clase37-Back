@@ -124,30 +124,7 @@ const putUserById = async (req, res) => {
         });
     }
 }
-const resetForm = (req,res)=>{    
-    let cookie= req.cookies
-    console.log(JSON.stringify(cookie))
-    if(JSON.stringify(cookie).length != 0){
-        res.render('resetPass',{
-            style: "resetPass.css", 
-            title: "Recoveru Pass",
-            message:`Esto es la cookie: ${JSON.stringify(cookie)}` 
-        })
-    }
-    else{
-        res.render('resetSendMail',{
-            style: "recovery.css",
-            title: "Recovery Pass Form",  
-            message:"Your password recovery link has expired. Please try again."
-        })
-    }
-}
-const resetPass = (req,res)=>{
-    let { email, password } = req.body
-    console.log(email)
-    console.log(password)
-    res.send('Hola');
-}
+
  
 module.exports = {
     getUser,
@@ -155,7 +132,5 @@ module.exports = {
     postUser,
     delUserById,
     putUserById,
-    rolUserById,
-    resetForm,
-    resetPass
+    rolUserById
 }
