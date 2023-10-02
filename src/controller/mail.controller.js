@@ -82,7 +82,7 @@ const sendMailWhitAttachments = (req,res)=>{
         res.status(500).send({ error: error, message: "Could not send email from: " + gmailAccount });
     }
 }
-const forgotPass = (req,res)=>{
+const forgotPass = (req,res)=>{ 
     res.render('resetSendMail',{
         style: "recovery.css",
         title: "Recovery Pass Form"  
@@ -116,14 +116,12 @@ const sendResetPass = async (req,res)=>{
                         <h3>We have sent you this email in response to your request to reset your password on company name.</h3><br>
                         <h3>To reset your password, please follow the link below:</h3>
                         <br>
-                        <p>User Id:</p>
-                        <p> ${user._id} </p>
                         <br>
                         <p>Token de Seguridad:</p>
                         <p> ${token} </p>
                         <br>
                         <br>
-                        <a class="btn btn-outline-primary mt-2 ms-2 me-2" href="http://localhost:8080/api/email/reset-form">Click here to Reset your Password</a>
+                        <a class="btn btn-outline-primary mt-2 ms-2 me-2" href="http://localhost:8080/api/email/reset-form/?token=${token}">Click here to Reset your Password</a>
                         <br>
                         <br>
                         <br>
@@ -169,11 +167,12 @@ const resetPass = async (req,res)=>{
     try{
         let {email,password, token} = req.body
         const user = await userModel.findOne({email:email})
-        if(isValidPass(password, user.password[0])){
+        if(isValidPass(password, user.password)){
            return res.status(401).render("resetPass", {
                 style: "resetPass.css",
                 title: "Info",
-                message:'Ingresa un password diferente al que tenias'
+                message:'Ingresa un password diferente al que tenias',
+                token:token
               });
         }
         jwt.verify(token, secret, async(error, user)=>{
@@ -189,7 +188,6 @@ const resetPass = async (req,res)=>{
                     age:user.age,
                     password:createHash(password),
                     rol:user.rol }
-                   
                 await userModel.updateOne( { _id: user._id },data)
                 return res.status(200).render("login", {
                     style: "login.css",

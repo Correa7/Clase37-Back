@@ -18,11 +18,16 @@ class UserClass{
         const deleted = await UserModel.deleteOne({ _id: _id });
         return deleted;
       }
-      async updateOne(_id, firstName, lastName, email, age, password, rol) {
-        const userUpDate = await UserModel.updateOne(
-          { _id: _id },
-          { firstName, lastName, email, age, password, rol }
-        );
+      async updateOne(_id,data) {
+        let user ={
+          firstName:data.firstName,
+          lastName:data.lastName,
+          email:data.email,
+          age:data.age,
+          password:data.password,
+          rol:data.rol
+      }
+        const userUpDate = await UserModel.updateOne({ _id: _id }, user);
         return userUpDate;
       }
 }

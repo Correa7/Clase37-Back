@@ -21,7 +21,7 @@ const initializePassport = () => {
                     console.log('User Not Found with username (email) ' + username);
                     return done(null, false);
                   }
-                  if (!isValidPass(password, userFound.password[0])) {
+                  if (!isValidPass(password, userFound.password)) {
                     console.log('Invalid Password');
                     return done(null, false);
                   }

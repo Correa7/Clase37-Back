@@ -21,12 +21,9 @@ class UserService{
         const deleted = await UserMethods.deleteOne({ _id: _id });
         return deleted;
       }
-      async updateOne(_id, firstName, lastName, email, age, password, rol) {
-        const userUpDate = await UserMethods.updateOne(
-          { _id: _id },
-          { firstName, lastName, email, age, password, rol }
-        );
+      async updateOne(_id,data) {
+        const userUpDate = await UserMethods.updateOne({ _id: _id },data);
         return userUpDate;
-      }
+      } 
 }
 module.exports = UserService
